@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>問題一覧 | 学内試験問題共有</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F4F1EC;
+      --surface: #FFFFFF;
+      --primary: #1A3A5C;
+      --accent: #D4763B;
+      --accent-light: #E89B67;
+      --text: #1C1C1E;
+      --text-muted: #6B6B6B;
+      --border: #E0DBD2;
+      --radius: 16px;
+      --shadow: 0 2px 16px rgba(26,58,92,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      padding-bottom: 60px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--primary);
+      color: #fff;
+      padding: 20px 16px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .back-btn:active { background: rgba(255,255,255,0.25); }
+
+    .header-title { flex: 1; }
+    .header-title h1 { font-size: 18px; font-weight: 900; }
+    .header-title p  { font-size: 12px; opacity: 0.65; margin-top: 2px; }
+
+    .count-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* ===== SEARCH ===== */
+    .search-bar { position: relative; margin-bottom: 12px; }
+
+    .search-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px; opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 40px 11px 36px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: background 0.15s;
+    }
+    .search-input::placeholder { color: rgba(255,255,255,0.5); }
+    .search-input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.4); }
+
+    .search-clear {
+      position: absolute;
+      right: 10px; top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      border: none; color: #fff;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      font-size: 12px; cursor: pointer;
+      display: none;
+      align-items: center; justify-content: center;
+    }
+    .search-clear.visible { display: flex; }
+
+    /* ===== FILTER ===== */
+    .filter-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 14px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 100px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.75);
+    }
+    .filter-btn.active { background: #fff; color: var(--primary); }
+    .filter-btn:active { transform: scale(0.95); }
+
+    /* ===== MAIN ===== */
+    .main { padding: 16px 16px 0; }
+
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .stats-text { font-size: 13px; color: var(--text-muted); }
+    .stats-text strong { color: var(--primary); font-weight: 700; }
+
+    .subject-counts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .count-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .count-chip .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+    /* ===== CARDS ===== */
+    .cards-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border-left: 4px solid var(--border);
+      animation: cardIn 0.25s ease both;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 14px 8px;
+    }
+
+    .q-number {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .subject-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .card-body { padding: 0 14px 16px; }
+
+    .card-body pre {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.8;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* ===== STATES ===== */
+    .loading { text-align: center; padding: 60px 20px; }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    .loading p { color: var(--text-muted); font-size: 14px; }
+
+    .error-msg {
+      background: #FFF0F0;
+      border: 1px solid #FFCCCC;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+    .error-msg p { color: #B94040; font-size: 14px; line-height: 1.8; }
+
+    .empty-state { text-align: center; padding: 60px 20px; display: none; }
+    .empty-state.visible { display: block; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+    .empty-state p { color: var(--text-muted); font-size: 15px; line-height: 1.7; }
+
+    .scroll-top {
+      position: fixed;
+      bottom: 24px; right: 20px;
+      width: 44px; height: 44px;
+      background: var(--primary);
+      color: #fff;
+      border: none; border-radius: 50%;
+      font-size: 18px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(26,58,92,0.3);
+      display: flex;
+      align-items: center; justify-content: center;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none; z-index: 50;
+    }
+    .scroll-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-top">
+      <a href="./index.html" class="back-btn">←</a>
+      <div class="header-title">
+        <h1>問題一覧</h1>
+        <p>科目別に絞り込んで閲覧</p>
+      </div>
+      <div class="count-badge" id="totalCount">読込中…</div>
+    </div>
+
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput"
+             placeholder="キーワードで検索" autocomplete="off">
+      <button class="search-clear" id="searchClear">×</button>
+    </div>
+
+    <div class="filter-scroll" id="filterScroll"></div>
+  </div>
+
+  <div class="main">
+    <div class="loading" id="loadingState">
+      <div class="spinner"></div>
+      <p>問題データを読み込み中…</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      <p>❌ データの読み込みに失敗しました。<br>
+         スプレッドシートの公開設定を確認してください。<br><br>
+         <small>「共有」→「リンクを知っている全員」→「閲覧者」</small></p>
+    </div>
+
+    <div class="subject-counts" id="subjectCounts" style="display:none;"></div>
+
+    <div class="stats-bar" id="statsBar" style="display:none;">
+      <p class="stats-text"><strong id="shownCount">0</strong> 問 表示中</p>
+    </div>
+
+    <div class="cards-list" id="cardsList"></div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">🔍</div>
+      <p>該当する問題が見つかりません。<br>検索条件を変えてみてください。</p>
+    </div>
+  </div>
+
+  <button class="scroll-top" id="scrollTop"
+          onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ============================================================
+//  設定（シートIDとgidは変更しないでください）
+// ============================================================
+const SHEET_ID = '1aG0Vj0jnYJtvQFGOREWVt5UCH4oWeijOlfqpY97Bm58';
+const GID      = '524600127';
+const CSV_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+// 列インデックス（0始まり）
+// A=0:タイムスタンプ, B=1:学籍番号, C=2:科目, D=3:出題時間, E=4:問題
+const COL_SUBJECT  = 2;
+const COL_QUESTION = 4;
+
+// 科目の表示順（ここに書いた順でフィルタボタンが並ぶ）
+const SUBJECT_ORDER = [
+  '保I(歯内)',
+  '保II(保存)',
+  '歯周',
+  '補綴I(ふみちゃん)',
+  '補綴II(クラブリ、インプラント)',
+  '小児',
+  '矯正',
+  '口外',
+  '放射',
+  '麻酔',
+  '内科',
+  '高齢者',
+  '解剖',
+  '組織',
+  '生理',
+  '生化学',
+  '病理',
+  '微生',
+  '薬理',
+  '口腔',
+  '理工',
+];
+
+// 科目カラーマップ
+const SUBJECT_COLORS = {
+  '保I(歯内)':                   { border: '#2E7D5A', tag: 'rgba(46,125,90,0.12)',   text: '#2E7D5A' },
+  '保II(保存)':                  { border: '#3A9E6E', tag: 'rgba(58,158,110,0.12)',  text: '#3A9E6E' },
+  '歯周':                        { border: '#4A7C59', tag: 'rgba(74,124,89,0.12)',   text: '#4A7C59' },
+  '補綴I(ふみちゃん)':           { border: '#2B5F8E', tag: 'rgba(43,95,142,0.12)',   text: '#2B5F8E' },
+  '補綴II(クラブリ、インプラント)':{ border: '#3A6FA8', tag: 'rgba(58,111,168,0.12)', text: '#3A6FA8' },
+  '小児':                        { border: '#7B5EA7', tag: 'rgba(123,94,167,0.12)',  text: '#7B5EA7' },
+  '矯正':                        { border: '#D4763B', tag: 'rgba(212,118,59,0.12)',  text: '#D4763B' },
+  '口外':                        { border: '#B94040', tag: 'rgba(185,64,64,0.12)',   text: '#B94040' },
+  '放射':                        { border: '#3B7D9E', tag: 'rgba(59,125,158,0.12)',  text: '#3B7D9E' },
+  '麻酔':                        { border: '#6B7A8E', tag: 'rgba(107,122,142,0.12)', text: '#6B7A8E' },
+  '内科':                        { border: '#4A7C59', tag: 'rgba(74,124,89,0.12)',   text: '#4A7C59' },
+  '高齢者':                      { border: '#8E6B2E', tag: 'rgba(142,107,46,0.12)',  text: '#8E6B2E' },
+  '解剖':                        { border: '#7A6A2E', tag: 'rgba(122,106,46,0.12)',  text: '#7A6A2E' },
+  '組織':                        { border: '#6A7A2E', tag: 'rgba(106,122,46,0.12)',  text: '#6A7A2E' },
+  '生理':                        { border: '#3A7A6A', tag: 'rgba(58,122,106,0.12)',  text: '#3A7A6A' },
+  '生化学':                      { border: '#5A3A7A', tag: 'rgba(90,58,122,0.12)',   text: '#5A3A7A' },
+  '病理':                        { border: '#6B4C2A', tag: 'rgba(107,76,42,0.12)',   text: '#6B4C2A' },
+  '微生':                        { border: '#7A3A5A', tag: 'rgba(122,58,90,0.12)',   text: '#7A3A5A' },
+  '薬理':                        { border: '#3A5A7A', tag: 'rgba(58,90,122,0.12)',   text: '#3A5A7A' },
+  '口腔':                        { border: '#5A7A3A', tag: 'rgba(90,122,58,0.12)',   text: '#5A7A3A' },
+  '理工':                        { border: '#7A5A3A', tag: 'rgba(122,90,58,0.12)',   text: '#7A5A3A' },
+};
+const DEFAULT_COLOR = { border: '#9AA5B0', tag: 'rgba(90,106,122,0.1)', text: '#5A6A7A' };
+// ============================================================
+
+let allQuestions  = [];
+let currentSubject = '全部';
+let currentSearch  = '';
+
+// ===== CSV取得 =====
+async function fetchCSV() {
+  const url = `${CSV_URL}&t=${Date.now()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+function parseCSV(text) {
+  const clean = text.replace(/^\uFEFF/, '');
+  const rows  = splitCSVRows(clean);
+  const result = [];
+
+  // 1行目はヘッダーのためスキップ
+  for (let i = 1; i < rows.length; i++) {
+    const cols     = rows[i];
+    const subject  = (cols[COL_SUBJECT]  || '').trim();
+    const question = (cols[COL_QUESTION] || '').trim();
+    if (!subject && !question) continue;
+    result.push({ id: i, subject, question });
+  }
+  return result;
+}
+
+// 改行を含むセルに対応したCSVパーサー
+function splitCSVRows(text) {
+  const rows = [];
+  let cur = [];
+  let cell = '';
+  let inQuote = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch   = text[i];
+    const next = text[i + 1];
+
+    if (ch === '"') {
+      if (inQuote && next === '"') { cell += '"'; i++; }
+      else inQuote = !inQuote;
+    } else if (ch === ',' && !inQuote) {
+      cur.push(cell); cell = '';
+    } else if (ch === '\r' && next === '\n' && !inQuote) {
+      cur.push(cell); cell = '';
+      rows.push(cur); cur = [];
+      i++;
+    } else if (ch === '\n' && !inQuote) {
+      cur.push(cell); cell = '';
+      rows.push(cur); cur = [];
+    } else {
+      cell += ch;
+    }
+  }
+  if (cell || cur.length) { cur.push(cell); rows.push(cur); }
+  return rows;
+}
+
+// ===== フィルタボタン =====
+function buildFilterButtons(subjects) {
+  const scroll = document.getElementById('filterScroll');
+  scroll.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'filter-btn active';
+  allBtn.textContent = '全部';
+  allBtn.onclick = () => setSubject('全部');
+  scroll.appendChild(allBtn);
+
+  subjects.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.textContent = s;
+    btn.onclick = () => setSubject(s);
+    scroll.appendChild(btn);
+  });
+}
+
+// ===== 科目カウント =====
+function buildSubjectCounts(questions) {
+  const container = document.getElementById('subjectCounts');
+  const counts = {};
+  questions.forEach(q => {
+    if (q.subject) counts[q.subject] = (counts[q.subject] || 0) + 1;
+  });
+
+  container.innerHTML = '';
+  Object.entries(counts).forEach(([s, n]) => {
+    const color = (SUBJECT_COLORS[s] || DEFAULT_COLOR).border;
+    const chip = document.createElement('div');
+    chip.className = 'count-chip';
+    chip.innerHTML = `<span class="dot" style="background:${color}"></span><span>${escapeHTML(s)} ${n}問</span>`;
+    container.appendChild(chip);
+  });
+  container.style.display = 'flex';
+}
+
+// ===== 科目選択 =====
+function setSubject(subject) {
+  currentSubject = subject;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === subject);
+  });
+  renderCards();
+}
+
+// ===== フィルタ =====
+function getFiltered() {
+  const kw = currentSearch.toLowerCase();
+  return allQuestions.filter(q => {
+    const matchSubject = currentSubject === '全部' || q.subject === currentSubject;
+    const matchSearch  = kw === '' ||
+      q.subject.toLowerCase().includes(kw) ||
+      q.question.toLowerCase().includes(kw);
+    return matchSubject && matchSearch;
+  });
+}
+
+// ===== カード描画 =====
+function renderCards() {
+  const list       = document.getElementById('cardsList');
+  const empty      = document.getElementById('emptyState');
+  const statsBar   = document.getElementById('statsBar');
+  const shownCount = document.getElementById('shownCount');
+
+  const filtered = getFiltered();
+  list.innerHTML = '';
+
+  if (filtered.length === 0) {
+    empty.classList.add('visible');
+    statsBar.style.display = 'none';
+  } else {
+    empty.classList.remove('visible');
+    statsBar.style.display = 'flex';
+    shownCount.textContent = filtered.length;
+    filtered.forEach((q, idx) => list.appendChild(createCard(q, idx)));
+  }
+}
+
+function createCard(q, idx) {
+  const color = SUBJECT_COLORS[q.subject] || DEFAULT_COLOR;
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.borderLeftColor = color.border;
+  card.style.animationDelay  = `${Math.min(idx * 0.03, 0.4)}s`;
+
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="q-number">No.${q.id}</span>
+      <span class="subject-tag"
+            style="background:${color.tag}; color:${color.text};">
+        ${escapeHTML(q.subject)}
+      </span>
+    </div>
+    <div class="card-body">
+      <pre>${escapeHTML(q.question)}</pre>
+    </div>
+  `;
+  return card;
+}
+
+function escapeHTML(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ===== 検索 =====
+document.getElementById('searchInput').addEventListener('input', function () {
+  currentSearch = this.value.trim();
+  document.getElementById('searchClear').classList.toggle('visible', currentSearch.length > 0);
+  renderCards();
+});
+
+document.getElementById('searchClear').addEventListener('click', function () {
+  document.getElementById('searchInput').value = '';
+  currentSearch = '';
+  this.classList.remove('visible');
+  renderCards();
+});
+
+// ===== スクロールトップ =====
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300);
+});
+
+// ===== 初期化 =====
+async function init() {
+  document.getElementById('loadingState').style.display = 'block';
+  document.getElementById('errorMsg').classList.remove('visible');
+
+  try {
+    allQuestions = await fetchCSV();
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('totalCount').textContent = `全 ${allQuestions.length} 問`;
+
+    // 科目をSUBJECT_ORDER順に並べ、未定義の科目は末尾に追加
+    const seen = new Set();
+    const subjects = [];
+    // まずSUBJECT_ORDER順に追加
+    SUBJECT_ORDER.forEach(s => {
+      if (allQuestions.some(q => q.subject === s)) {
+        seen.add(s);
+        subjects.push(s);
+      }
+    });
+    // SUBJECT_ORDERにない科目は末尾に追加
+    allQuestions.forEach(q => {
+      if (q.subject && !seen.has(q.subject)) {
+        seen.add(q.subject);
+        subjects.push(q.subject);
+      }
+    });
+
+    buildFilterButtons(subjects);
+    buildSubjectCounts(allQuestions);
+    renderCards();
+
+  } catch (e) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorMsg').classList.add('visible');
+    document.getElementById('totalCount').textContent = 'エラー';
+    console.error('CSV取得エラー:', e);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
