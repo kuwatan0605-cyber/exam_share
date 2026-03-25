@@ -639,12 +639,24 @@ window.addEventListener('scroll', () => {
 });
 
 // ===== 画像モーダル =====
+function convertImageUrl(url) {
+  if (!url) return url;
+  // パターン1: https://drive.google.com/file/d/ID/view...
+  const m1 = url.match(/drive\.google\.com\/file\/d\/([^\/\?]+)/);
+  if (m1) return `https://drive.google.com/uc?export=view&id=${m1[1]}`;
+  // パターン2: https://drive.google.com/open?id=ID
+  const m2 = url.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if (m2) return `https://drive.google.com/uc?export=view&id=${m2[1]}`;
+  // それ以外はそのまま返す
+  return url;
+}
+
 function showImage(url) {
   const modal = document.getElementById('imageModal');
   const img   = document.getElementById('modalImg');
   const err   = document.getElementById('modalError');
   img.style.display = 'block'; err.style.display = 'none';
-  img.src = url;
+  img.src = convertImageUrl(url);
   modal.classList.add('visible');
   document.body.style.overflow = 'hidden';
 }
