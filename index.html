@@ -204,13 +204,12 @@
     <div class="buttons">
 
       <!-- 回答する -->
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSd2vaFYU2jnAJS1XEAYz0F2FJ8d2Q_B_UgF21wr17Pm5__19A/viewform"
-         class="btn btn-primary" target="_blank" rel="noopener">
+      <a href="#" id="formBtn" class="btn btn-primary" target="_blank" rel="noopener">
         <div class="btn-strip"></div>
         <div class="btn-content">
           <span class="btn-label">Contribute</span>
           <span class="btn-title">回答する</span>
-          <span class="btn-desc">Googleフォームで問題を投稿</span>
+          <span class="btn-desc" id="formBtnDesc">Googleフォームで問題を投稿</span>
         </div>
         <div class="btn-icon">✏️</div>
       </a>
@@ -240,5 +239,51 @@
 
     <div class="footer"><p>© 2025 総合試験対策</p></div>
   </div>
+
+<script>
+// ============================================================
+//  フォーム自動切り替え設定
+//  日付が来たら自動でURLが切り替わります
+// ============================================================
+const FORM_SCHEDULE = [
+  {
+    from: new Date('2026-12-01T00:00:00+09:00'),
+    url:  'https://docs.google.com/forms/d/e/1FAIpQLSdheJbPvxkDJs_TqZtxFmbtTJR-LAiy0CQ3-5Ycpc5cJGqPhA/viewform',
+    label: '6年 卒業試験',
+  },
+  {
+    from: new Date('2026-10-01T00:00:00+09:00'),
+    url:  'https://docs.google.com/forms/d/e/1FAIpQLSf5VSBTlXrJd7A1lQmZkmo97QdZHpg9wp0w2LcUZ3E3Viicjw/viewform',
+    label: '6年 総合試験③',
+  },
+  {
+    from: new Date('2026-07-01T00:00:00+09:00'),
+    url:  'https://docs.google.com/forms/d/e/1FAIpQLScmrnK6OXWDiXmLVqeW7J1SLlUX1upCkM0UbAZd6U-8RF36DA/viewform',
+    label: '6年 総合試験②',
+  },
+  {
+    from: new Date('2026-04-01T00:00:00+09:00'),
+    url:  'https://docs.google.com/forms/d/e/1FAIpQLScHdQuYebga2H6WzAsT1SIwsBptuEaFdcUZQrEkjO2YFKN_bA/viewform',
+    label: '6年 総合試験①',
+  },
+  {
+    from: new Date('2000-01-01T00:00:00+09:00'), // デフォルト（常に最後の候補）
+    url:  'https://docs.google.com/forms/d/e/1FAIpQLSd2vaFYU2jnAJS1XEAYz0F2FJ8d2Q_B_UgF21wr17Pm5__19A/viewform',
+    label: '5年 総合試験②',
+  },
+];
+
+function updateFormBtn() {
+  const now = new Date();
+  // 日付が新しい順に並んでいるので、最初に条件を満たしたものを使う
+  const current = FORM_SCHEDULE.find(f => now >= f.from);
+  if (current) {
+    document.getElementById('formBtn').href = current.url;
+    document.getElementById('formBtnDesc').textContent = `${current.label} の回答フォーム`;
+  }
+}
+
+updateFormBtn();
+</script>
 </body>
 </html>
