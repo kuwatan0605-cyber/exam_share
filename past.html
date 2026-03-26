@@ -19,22 +19,25 @@
       --text-muted: #4A7A8A;
       --border: #A8D8E8;
       --shadow: 0 4px 20px rgba(26,107,138,0.12);
-      --shadow-hover: 0 8px 32px rgba(26,107,138,0.20);
-      --radius: 18px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+    }
     body {
       font-family: 'Zen Maru Gothic', sans-serif;
       background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
       min-height: 100vh;
-      padding-bottom: 40px;
+      display: flex;
+      flex-direction: column;
     }
 
     /* HEADER */
     .header {
       background: var(--primary);
-      padding: 20px 20px 24px;
+      padding: 20px 20px 20px;
       display: flex; align-items: center; gap: 14px;
+      flex-shrink: 0;
     }
     .back-btn {
       display: flex; align-items: center; justify-content: center;
@@ -44,254 +47,82 @@
       font-size: 18px; flex-shrink: 0;
     }
     .back-btn:active { background: rgba(255,255,255,0.25); }
+    .header-text { flex: 1; }
     .header-text h1 { font-size: 18px; font-weight: 900; color: #fff; }
     .header-text p  { font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px; }
 
-    /* MAIN */
-    .main { padding: 28px 20px 0; max-width: 500px; margin: 0 auto; }
-
-    .section-label {
-      font-size: 11px; font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.1em; text-transform: uppercase;
-      margin-bottom: 14px;
-    }
-
-    /* PDF LIST */
-    .pdf-list { display: flex; flex-direction: column; gap: 12px; }
-
-    .pdf-card {
-      display: flex;
-      align-items: center; justify-content: space-between;
-      padding: 18px 20px;
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      cursor: pointer;
-      border-left: 4px solid #E8A020;
-      transition: transform 0.15s, box-shadow 0.15s;
-      animation: fadeUp 0.3s ease both;
-    }
-    .pdf-card:hover  { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-    .pdf-card:active { transform: scale(0.97); }
-
-    .pdf-card-left { display: flex; align-items: center; gap: 14px; }
-    .pdf-icon {
-      width: 44px; height: 44px;
-      background: rgba(232,160,32,0.12);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; flex-shrink: 0;
-    }
-    .pdf-info { display: flex; flex-direction: column; gap: 3px; }
-    .pdf-year { font-size: 11px; font-weight: 700; color: var(--text-muted); }
-    .pdf-name { font-size: 15px; font-weight: 900; color: var(--primary-dark); }
-    .pdf-arrow { font-size: 18px; color: var(--text-muted); }
-
-    /* PDF VIEWER MODAL */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 200;
-      display: flex; flex-direction: column;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.2s;
-    }
-    .modal-overlay.visible { opacity: 1; pointer-events: auto; }
-
-    .modal-header {
-      background: var(--primary);
-      padding: 14px 16px;
-      display: flex; align-items: center; gap: 12px;
-      flex-shrink: 0;
-    }
-    .modal-close {
-      width: 34px; height: 34px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.15);
-      border: none; color: #fff;
-      font-size: 18px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .modal-title { font-size: 15px; font-weight: 700; color: #fff; flex: 1; }
-    .open-drive-btn {
+    .drive-open-btn {
       display: flex; align-items: center; gap: 5px;
       background: rgba(255,255,255,0.15);
       border: 1px solid rgba(255,255,255,0.3);
       border-radius: 8px;
-      padding: 6px 12px;
+      padding: 7px 12px;
       color: #fff;
       font-family: 'Zen Maru Gothic', sans-serif;
       font-size: 12px; font-weight: 700;
       cursor: pointer; text-decoration: none;
       white-space: nowrap;
+      flex-shrink: 0;
     }
+    .drive-open-btn:active { background: rgba(255,255,255,0.25); }
 
-    .pdf-frame-wrap {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .pdf-frame {
-      width: 100%; height: 100%;
-      border: none;
-      flex: 1;
-    }
-
-    .pdf-loading {
-      position: absolute;
-      inset: 60px 0 0 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: #fff;
-      gap: 16px;
-    }
-    .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    .pdf-loading p { font-size: 14px; opacity: 0.8; }
-
-    /* 注意書き */
+    /* NOTE */
     .note {
-      background: rgba(255,255,255,0.7);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-      font-size: 13px;
+      background: rgba(255,255,255,0.75);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      font-size: 12px;
       color: var(--text-muted);
-      line-height: 1.7;
+      line-height: 1.6;
+      flex-shrink: 0;
     }
     .note strong { color: var(--primary-dark); }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* DRIVE FRAME */
+    .drive-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .drive-frame {
+      width: 100%;
+      flex: 1;
+      border: none;
+      background: #fff;
+      min-height: calc(100vh - 140px);
+    }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <div class="header">
     <a href="./index.html" class="back-btn">←</a>
     <div class="header-text">
       <h1>過去問 (PDF)</h1>
-      <p>過去の試験問題を閲覧できます</p>
+      <p>ファイルをタップして閲覧</p>
     </div>
+    <a href="https://drive.google.com/drive/folders/1vApDKtna8Q8etytVqQDrb7jFvC8Dt6-9"
+       target="_blank" rel="noopener" class="drive-open-btn">
+      🔗 Driveで開く
+    </a>
   </div>
 
-  <div class="main">
-
-    <div class="note">
-      <strong>📌 閲覧について</strong><br>
-      PDFをタップすると画面内で閲覧できます。
-      うまく表示されない場合は「Driveで開く」ボタンをご利用ください。
-    </div>
-
-    <div class="section-label">過去問一覧</div>
-
-    <div class="pdf-list" id="pdfList">
-      <!-- ============================================================
-           PDFリスト
-           新しいPDFを追加する場合は以下をコピーして追記してください
-      ============================================================ -->
-
-      <div class="pdf-card" style="animation-delay:0.05s;"
-           onclick="openPDF('https://drive.google.com/file/d/FILE_ID_1/preview', '5年 総合試験②', 'https://drive.google.com/file/d/FILE_ID_1/view')">
-        <div class="pdf-card-left">
-          <div class="pdf-icon">📄</div>
-          <div class="pdf-info">
-            <span class="pdf-year">2025年</span>
-            <span class="pdf-name">5年 総合試験②</span>
-          </div>
-        </div>
-        <span class="pdf-arrow">›</span>
-      </div>
-
-      <div class="pdf-card" style="animation-delay:0.10s;"
-           onclick="openPDF('https://drive.google.com/file/d/FILE_ID_2/preview', '6年 総合試験①', 'https://drive.google.com/file/d/FILE_ID_2/view')">
-        <div class="pdf-card-left">
-          <div class="pdf-icon">📄</div>
-          <div class="pdf-info">
-            <span class="pdf-year">2025年</span>
-            <span class="pdf-name">6年 総合試験①</span>
-          </div>
-        </div>
-        <span class="pdf-arrow">›</span>
-      </div>
-
-      <!-- 追加テンプレート（コピーして使用）
-      <div class="pdf-card" style="animation-delay:0.15s;"
-           onclick="openPDF('https://drive.google.com/file/d/ここにファイルID/preview', '試験名', 'https://drive.google.com/file/d/ここにファイルID/view')">
-        <div class="pdf-card-left">
-          <div class="pdf-icon">📄</div>
-          <div class="pdf-info">
-            <span class="pdf-year">2026年</span>
-            <span class="pdf-name">試験名</span>
-          </div>
-        </div>
-        <span class="pdf-arrow">›</span>
-      </div>
-      -->
-
-    </div>
+  <!-- NOTE -->
+  <div class="note">
+    📌 ファイル名をタップするとPDFが開きます。表示されない場合は右上「Driveで開く」をご利用ください。
   </div>
 
-  <!-- PDF閲覧モーダル -->
-  <div class="modal-overlay" id="pdfModal">
-    <div class="modal-header">
-      <button class="modal-close" onclick="closeModal()">←</button>
-      <span class="modal-title" id="modalTitle">PDF</span>
-      <a class="open-drive-btn" id="driveLink" href="#" target="_blank" rel="noopener">
-        🔗 Driveで開く
-      </a>
-    </div>
-    <div class="pdf-frame-wrap">
-      <div class="pdf-loading" id="pdfLoading">
-        <div class="spinner"></div>
-        <p>PDFを読み込み中…</p>
-      </div>
-      <iframe class="pdf-frame" id="pdfFrame" src="" allowfullscreen
-              onload="document.getElementById('pdfLoading').style.display='none'"></iframe>
-    </div>
+  <!-- Googleドライブ フォルダ埋め込み -->
+  <div class="drive-wrap">
+    <iframe
+      class="drive-frame"
+      src="https://drive.google.com/embeddedfolderview?id=1vApDKtna8Q8etytVqQDrb7jFvC8Dt6-9#list"
+      allowfullscreen>
+    </iframe>
   </div>
 
-<script>
-// ============================================================
-//  過去問PDFの設定
-//  GoogleドライブのファイルIDを入れるだけで追加できます
-//
-//  ファイルIDの取得方法：
-//  Driveでファイルを右クリック→「共有」→URLの /d/ と /view の間の文字列
-//
-//  ※ 各PDFファイルを「リンクを知っている全員が閲覧可」に設定してください
-// ============================================================
-
-function openPDF(previewUrl, title, driveUrl) {
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('driveLink').href = driveUrl;
-  document.getElementById('pdfLoading').style.display = 'flex';
-  document.getElementById('pdfFrame').src = previewUrl;
-  document.getElementById('pdfModal').classList.add('visible');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('pdfModal').classList.remove('visible');
-  document.getElementById('pdfFrame').src = '';
-  document.body.style.overflow = '';
-}
-
-// バックボタンで閉じる
-window.addEventListener('popstate', closeModal);
-</script>
 </body>
 </html>
