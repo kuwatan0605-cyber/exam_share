@@ -165,8 +165,16 @@
         <span class="exam-arrow">›</span>
       </a>
 
-      <!-- 6年総合試験①（Coming Soon） -->
-      <div class="exam-card coming-soon" style="animation-delay:0.15s;">
+      <!-- 6年総合試験①（2026年4月1日から有効） -->
+      <div class="exam-card" id="card-6nen1" style="border-left-color:#3B7D9E; animation-delay:0.15s; display:none;"
+           onclick="location.href='./viewer.html?exam=6nen1'">
+        <div class="exam-card-left">
+          <span class="exam-year">2026年</span>
+          <span class="exam-name">6年 総合試験①</span>
+        </div>
+        <span class="exam-arrow">›</span>
+      </div>
+      <div class="exam-card coming-soon" id="soon-6nen1" style="animation-delay:0.15s;">
         <div class="exam-card-left">
           <span class="exam-year">2026年（予定）</span>
           <span class="exam-name">6年 総合試験①</span>
@@ -174,8 +182,16 @@
         <span class="badge-soon">Coming Soon</span>
       </div>
 
-      <!-- Coming Soon（2026年） -->
-      <div class="exam-card coming-soon" style="animation-delay:0.20s;">
+      <!-- 6年総合試験②（2026年7月1日から有効） -->
+      <div class="exam-card" id="card-6nen2" style="border-left-color:#7B5EA7; animation-delay:0.20s; display:none;"
+           onclick="location.href='./viewer.html?exam=6nen2'">
+        <div class="exam-card-left">
+          <span class="exam-year">2026年</span>
+          <span class="exam-name">6年 総合試験②</span>
+        </div>
+        <span class="exam-arrow">›</span>
+      </div>
+      <div class="exam-card coming-soon" id="soon-6nen2" style="animation-delay:0.20s;">
         <div class="exam-card-left">
           <span class="exam-year">2026年（予定）</span>
           <span class="exam-name">6年 総合試験②</span>
@@ -183,7 +199,16 @@
         <span class="badge-soon">Coming Soon</span>
       </div>
 
-      <div class="exam-card coming-soon" style="animation-delay:0.25s;">
+      <!-- 6年総合試験③（2026年10月1日から有効） -->
+      <div class="exam-card" id="card-6nen3" style="border-left-color:#D4763B; animation-delay:0.25s; display:none;"
+           onclick="location.href='./viewer.html?exam=6nen3'">
+        <div class="exam-card-left">
+          <span class="exam-year">2026年</span>
+          <span class="exam-name">6年 総合試験③</span>
+        </div>
+        <span class="exam-arrow">›</span>
+      </div>
+      <div class="exam-card coming-soon" id="soon-6nen3" style="animation-delay:0.25s;">
         <div class="exam-card-left">
           <span class="exam-year">2026年（予定）</span>
           <span class="exam-name">6年 総合試験③</span>
@@ -191,7 +216,16 @@
         <span class="badge-soon">Coming Soon</span>
       </div>
 
-      <div class="exam-card coming-soon" style="animation-delay:0.30s;">
+      <!-- 6年卒業試験（2026年12月1日から有効） -->
+      <div class="exam-card" id="card-6sotsu" style="border-left-color:#B94040; animation-delay:0.30s; display:none;"
+           onclick="location.href='./viewer.html?exam=6sotsu'">
+        <div class="exam-card-left">
+          <span class="exam-year">2026年</span>
+          <span class="exam-name">6年 卒業試験</span>
+        </div>
+        <span class="exam-arrow">›</span>
+      </div>
+      <div class="exam-card coming-soon" id="soon-6sotsu" style="animation-delay:0.30s;">
         <div class="exam-card-left">
           <span class="exam-year">2026年（予定）</span>
           <span class="exam-name">6年 卒業試験</span>
@@ -201,5 +235,29 @@
 
     </div>
   </div>
+
+<script>
+// ============================================================
+//  試験ボタンの自動有効化
+//  指定日になると Coming Soon → 有効なボタンに切り替わります
+// ============================================================
+const ACTIVATE_SCHEDULE = [
+  { key: '6nen1',  date: new Date('2026-04-01T00:00:00+09:00') },
+  { key: '6nen2',  date: new Date('2026-07-01T00:00:00+09:00') },
+  { key: '6nen3',  date: new Date('2026-10-01T00:00:00+09:00') },
+  { key: '6sotsu', date: new Date('2026-12-01T00:00:00+09:00') },
+];
+
+const now = new Date();
+ACTIVATE_SCHEDULE.forEach(({ key, date }) => {
+  if (now >= date) {
+    // 有効カードを表示、Coming Soonを非表示
+    const card = document.getElementById(`card-${key}`);
+    const soon = document.getElementById(`soon-${key}`);
+    if (card) card.style.display = 'flex';
+    if (soon) soon.style.display = 'none';
+  }
+});
+</script>
 </body>
 </html>
