@@ -177,6 +177,18 @@
       color: var(--primary);
       margin-left: auto;
     }
+
+    /* 正答率バッジ */
+    .correct-rate {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 3px 10px; border-radius: 100px;
+      font-size: 12px; font-weight: 700;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .correct-rate.high   { background: rgba(46,125,90,0.12);  color: #2E7D5A; } /* 80%以上 */
+    .correct-rate.mid    { background: rgba(212,118,59,0.12); color: #C4631A; } /* 50〜79% */
+    .correct-rate.low    { background: rgba(185,64,64,0.12);  color: #B94040; } /* 50%未満 */
     .card-body { padding: 0 14px 14px; }
     .card-body pre {
       font-family: 'Noto Sans JP', sans-serif;
@@ -359,9 +371,10 @@ const EXAM_SOURCES = {
 };
 
 // 列インデックス（0始まり）
-const COL_SUBJECT  = 2;
-const COL_QUESTION = 4;
-const COL_IMAGE    = 5;
+const COL_SUBJECT       = 2;
+const COL_QUESTION      = 4;
+const COL_IMAGE         = 5;
+const COL_CORRECT_RATE  = 6; // G列：正答率
 
 // 科目の表示順
 const SUBJECT_ORDER = [
@@ -422,11 +435,12 @@ function parseCSV(text, examKey) {
   const result = [];
   for (let i = 1; i < rows.length; i++) {
     const cols     = rows[i];
-    const subject  = (cols[COL_SUBJECT]  || '').trim();
-    const question = (cols[COL_QUESTION] || '').trim();
-    const imageUrl = (cols[COL_IMAGE]    || '').trim();
+    const subject      = (cols[COL_SUBJECT]       || '').trim();
+    const question     = (cols[COL_QUESTION]      || '').trim();
+    const imageUrl     = (cols[COL_IMAGE]         || '').trim();
+    const correctRate  = (cols[COL_CORRECT_RATE]  || '').trim();
     if (!subject && !question) continue;
-    result.push({ id: i, subject, question, imageUrl, examKey });
+    result.push({ id: i, subject, question, imageUrl, correctRate, examKey });
   }
   return result;
 }
@@ -598,12 +612,21 @@ function createCard(q, idx) {
     ? `<span class="exam-tag">${escapeHTML(examSrc.name)}</span>`
     : '';
 
+  // 正答率バッジ（G列に値がある場合のみ表示）
+  let rateTag = '';
+  if (q.correctRate !== '') {
+    const rate = parseFloat(q.correctRate);
+    const cls  = rate >= 80 ? 'high' : rate >= 50 ? 'mid' : 'low';
+    rateTag = `<span class="correct-rate ${cls}">📊 ${rate}%</span>`;
+  }
+
   card.innerHTML = `
     <div class="card-header">
       <span class="q-number">No.${q.id}</span>
       <span class="subject-tag" style="background:${color.tag}; color:${color.text};">
         ${escapeHTML(q.subject)}
       </span>
+      ${rateTag}
       ${examTag}
     </div>
     <div class="card-body">
